@@ -1,8 +1,13 @@
-My Awesome Book
-=======
+# Introduction
 
-This file file serves as your book's preface, a great place to describe your book's content and ideas.
+March - July 2015
 
-sync with  https://github.com/product-owner/2015scrum test OK
+Welcome, this is an ongoing project record for a university course named collaborative product design principles and practices.
 
-sync with https://www.gitbook.com/book/product_owner/2015scrumproject/dashboard ok
+Github integration: https://github.com/coursemdetw/2015cd.git 
+
+course website: http://cd-cadp.rhcloud.com
+
+
+
+
