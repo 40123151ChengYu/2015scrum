@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Created by Leo: http://leoeditor.com/leo_toc.html -->
+<!-- Created by Leo (http://leoeditor.com/leo_toc.html) -->
 <?xml-stylesheet ekr_test?>
-<leo_file xmlns:leo="http://leoeditor.com/namespaces/leo-python-editor/1.1" >
+<leo_file xmlns:leo="http://www.leo-editor.org/2011/leo" >
 <leo_header file_format="2" tnodes="0" max_tnode_index="0" clone_windows="0"/>
 <globals body_outline_ratio="0.5" body_secondary_ratio="0.5">
 	<global_window_position top="50" left="50" height="500" width="700"/>
@@ -10,14 +10,24 @@
 <preferences/>
 <find_panel_settings/>
 <vnodes>
-<v t="2014fall.20141212095015.1784" a="E"><vh>@settings</vh>
+<v t="2014fall.20141212095015.1784"><vh>@settings</vh>
 <v t="2014fall.20141212095015.1785"><vh>@data qt-gui-plugin-style-sheet</vh></v>
 <v t="2014fall.20141212095015.1786"><vh>@string initial_split_orientation = horizontal</vh></v>
 </v>
+<v t="2015.20150330144929.1714"><vh>以下為協同產品開發程式</vh></v>
 <v t="2014fall.20141212095015.1774" a="E"><vh>@path ./</vh>
 <v t="2014fall.20141212095015.1775" a="E"
 expanded="2014fall.20141212095015.1777,"><vh>@file wsgi.py</vh></v>
 <v t="2014fall.20141212095015.1780"><vh>@edit setup.py</vh></v>
+</v>
+<v t="2015.20150330144929.1715" a="E"><vh>以下為專案報告相關檔案</vh>
+<v t="2015.20150330144929.1716"><vh>@edit SUMMARY.md</vh></v>
+<v t="2015.20150330144929.1717" a="E"><vh>@edit README.md </vh>
+<v t="2015.20150330144929.1718"><vh>@edit _任務執行.md</vh></v>
+<v t="2015.20150330144929.1719"><vh>@edit q&amp;a.md</vh></v>
+</v>
+<v t="2015.20150330144929.1720"><vh>@edit _建立分組協同報告.md</vh></v>
+<v t="2015.20150330144929.1721"><vh>@edit _新產品開發流程.md</vh></v>
 </v>
 </vnodes>
 <tnodes>
@@ -116,5 +126,22 @@ QLineEdit#editorLabel {
 }</t>
 <t tx="2014fall.20141212095015.1786">horizontal: body pane to the left
 vertical: body pane on the botton</t>
+<t tx="2015.20150330144929.1714"></t>
+<t tx="2015.20150330144929.1715"></t>
+<t tx="2015.20150330144929.1717">@language md
+# Introduction
+
+March - July 2015
+
+Welcome, this is an ongoing project record for a university course named collaborative product design principles and practices.
+
+Github integration: https://github.com/coursemdetw/2015cd.git 
+
+course website: http://cd-cadp.rhcloud.com
+
+
+
+
+</t>
 </tnodes>
 </leo_file>

@@ -167,6 +167,34 @@ class Hello(object):
     '''
 
         return outstring
+    #@+node:2015.20150330144929.1713: *3* twoDgear
+    @cherrypy.expose
+    # N 為齒數, M 為模數, P 為壓力角
+    def twoDgear(self, N=20, M=5, P=15):
+        outstring = '''
+    <!DOCTYPE html> 
+    <html>
+    <head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <!-- 載入 brython.js -->
+    <script type="text/javascript" src="/static/Brython3.1.0-20150301-090019/brython.js"></script>
+    <script src="/static/Cango2D.js" type="text/javascript"></script>
+    <script src="/static/gearUtils-04.js" type="text/javascript"></script>
+    </head>
+    <!-- 啟動 brython() -->
+    <body onload="brython()">
+        
+    <form method=POST action=do2Dgear>
+    齒數:<input type=text name=N><br />
+    模數:<input type=text name=M><br />
+    壓力角:<input type=text name=P><br />
+    <input type=submit value=send>
+    </form>
+    </body>
+    </html>
+    '''
+
+        return outstring
     #@+node:2014fall.20141215194146.1793: *3* doCheck
     @cherrypy.expose
     def doCheck(self, guess=None):
