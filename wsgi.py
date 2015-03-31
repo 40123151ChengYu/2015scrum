@@ -96,7 +96,7 @@ class Hello(object):
     <head>
     <meta http-equiv="content-type" content="text/html;charset=utf-8">
     <!-- 載入 brython.js -->
-    <script type="text/javascript" src="/static/Brython3.1.0-20150301-090019/brython.js"></script>
+    <script type="text/javascript" src="/static/Brython3.1.1-20150328-091302/brython.js"></script>
     <script src="/static/Cango2D.js" type="text/javascript"></script>
     <script src="/static/gearUtils-04.js" type="text/javascript"></script>
     </head>
@@ -127,8 +127,9 @@ class Hello(object):
     import math
 
     # 畫布指定在名稱為 plotarea 的 canvas 上
-    canvas = document["plotarea"]
-    ctx = canvas.getContext("2d")
+    # 以下使用中文變數名稱
+    畫布 = document["plotarea"]
+    ctx = 畫布.getContext("2d")
 
     # 用紅色畫一條直線
     ctx.beginPath()
@@ -177,7 +178,7 @@ class Hello(object):
     <head>
     <meta http-equiv="content-type" content="text/html;charset=utf-8">
     <!-- 載入 brython.js -->
-    <script type="text/javascript" src="/static/Brython3.1.0-20150301-090019/brython.js"></script>
+    <script type="text/javascript" src="/static/Brython3.1.1-20150328-091302/brython.js"></script>
     <script src="/static/Cango2D.js" type="text/javascript"></script>
     <script src="/static/gearUtils-04.js" type="text/javascript"></script>
     </head>
@@ -205,7 +206,7 @@ class Hello(object):
     <head>
     <meta http-equiv="content-type" content="text/html;charset=utf-8">
     <!-- 載入 brython.js -->
-    <script type="text/javascript" src="/static/Brython3.1.0-20150301-090019/brython.js"></script>
+    <script type="text/javascript" src="/static/Brython3.1.1-20150328-091302/brython.js"></script>
     <script src="/static/Cango2D.js" type="text/javascript"></script>
     <script src="/static/gearUtils-04.js" type="text/javascript"></script>
     </head>
@@ -233,7 +234,7 @@ class Hello(object):
     <head>
     <meta http-equiv="content-type" content="text/html;charset=utf-8">
     <!-- 載入 brython.js -->
-    <script type="text/javascript" src="/static/Brython3.1.0-20150301-090019/brython.js"></script>
+    <script type="text/javascript" src="/static/Brython3.1.1-20150328-091302/brython.js"></script>
     <script src="/static/Cango2D.js" type="text/javascript"></script>
     <script src="/static/gearUtils-04.js" type="text/javascript"></script>
     </head>
@@ -299,7 +300,7 @@ class Hello(object):
     <head>
     <meta http-equiv="content-type" content="text/html;charset=utf-8">
     <!-- 載入 brython.js -->
-    <script type="text/javascript" src="/static/Brython3.1.0-20150301-090019/brython.js"></script>
+    <script type="text/javascript" src="/static/Brython3.1.1-20150328-091302/brython.js"></script>
     <script src="/static/Cango2D.js" type="text/javascript"></script>
     <script src="/static/gearUtils-04.js" type="text/javascript"></script>
     </head>
@@ -365,7 +366,7 @@ class Hello(object):
     <head>
     <meta http-equiv="content-type" content="text/html;charset=utf-8">
     <!-- 載入 brython.js -->
-    <script type="text/javascript" src="/static/Brython3.1.0-20150301-090019/brython.js"></script>
+    <script type="text/javascript" src="/static/Brython3.1.1-20150328-091302/brython.js"></script>
     <script src="/static/Cango2D.js" type="text/javascript"></script>
     <script src="/static/gearUtils-04.js" type="text/javascript"></script>
     </head>
@@ -400,7 +401,7 @@ class Hello(object):
     # midx 為齒輪圓心 x 座標
     # midy 為齒輪圓心 y 座標
     # rp 為節圓半徑, n 為齒數
-    def gear(midx, midy, rp, n, 顏色):
+    def 齒輪(midx, midy, rp, n, 顏色):
         # 將角度轉換因子設為全域變數
         global deg
         # 齒輪漸開線分成 15 線段繪製
@@ -493,7 +494,8 @@ class Hello(object):
             # 下列為齒頂圓上用來近似圓弧的直線
             create_line(lfx,lfy,rfx,rfy,fill=顏色)
 
-    gear(400,400,300,41,"blue")
+    齒輪(400,400,300,41,"blue")
+
     </script>
     <canvas id="plotarea" width="800" height="800"></canvas>
     </body>
@@ -511,7 +513,7 @@ class Hello(object):
     <head>
     <meta http-equiv="content-type" content="text/html;charset=utf-8">
     <!-- 載入 brython.js -->
-    <script type="text/javascript" src="/static/Brython3.1.0-20150301-090019/brython.js"></script>
+    <script type="text/javascript" src="/static/Brython3.1.1-20150328-091302/brython.js"></script>
     <script src="/static/Cango2D.js" type="text/javascript"></script>
     <script src="/static/gearUtils-04.js" type="text/javascript"></script>
     </head>
