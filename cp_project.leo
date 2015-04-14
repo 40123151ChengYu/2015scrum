@@ -25,6 +25,13 @@ expanded="2014fall.20141212095015.1777,"><vh>@file wsgi.py</vh></v>
 <v t="2015.20150330144929.1717"><vh>@edit README.md </vh></v>
 <v t="2015.20150330144929.1720"><vh>@edit _建立分組協同報告.md</vh></v>
 <v t="2015.20150330144929.1721"><vh>@edit _新產品開發流程.md</vh></v>
+<v t="amd.20150414195734.1"><vh>@edit _協同上機考試.md</vh></v>
+<v t="amd.20150414195826.1"><vh>@edit scrumaster.md</vh></v>
+<v t="amd.20150414195850.1"><vh>@edit scrum_1.md</vh></v>
+<v t="amd.20150414195859.1"><vh>@edit scrum_2.md</vh></v>
+<v t="amd.20150414195906.1"><vh>@edit scrum_3.md</vh></v>
+<v t="amd.20150414195916.1"><vh>@edit scrum_4.md</vh></v>
+<v t="amd.20150414195741.1"><vh>@edit product_owner.md</vh></v>
 </v>
 <v t="2015.20150330144929.1763"><vh>以下為參考資料</vh>
 <v t="2015.20150330144929.1764"><vh>Brython 正齒輪程式</vh></v>
