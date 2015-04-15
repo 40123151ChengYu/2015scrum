@@ -505,6 +505,48 @@ class Hello(object):
     '''
 
         return outstring
+    #@+node:amd.20150415215023.1: *3* mygeartest2
+    @cherrypy.expose
+    # N 為齒數, M 為模數, P 為壓力角
+    def mygeartest2(self, N=20, M=5, P=15):
+        outstring = '''
+    <!DOCTYPE html> 
+    <html>
+    <head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <!-- 載入 brython.js -->
+    <script type="text/javascript" src="/static/Brython3.1.1-20150328-091302/brython.js"></script>
+    <script src="/static/Cango2D.js" type="text/javascript"></script>
+    <script src="/static/gearUtils-04.js" type="text/javascript"></script>
+    </head>
+    <!-- 啟動 brython() -->
+    <body onload="brython()">
+
+    <!-- 以下為 canvas 畫圖程式 -->
+    <script type="text/python">
+    # 從 browser 導入 document
+    from browser import document
+    from math import *
+    # 請注意, 這裡導入位於 Lib/site-packages 目錄下的 spur.py 檔案
+    import spur
+
+    # 準備在 id="plotarea" 的 canvas 中繪圖
+    canvas = document["plotarea"]
+    ctx = canvas.getContext("2d")
+
+    # 以下利用 spur.py 程式進行繪圖, 接下來的協同設計運算必須要配合使用者的需求進行設計運算與繪圖
+    # 其中並將工作分配給其他組員建立類似 spur.py 的相關零件繪圖模組
+    spur.Spur(ctx).齒輪(400,400,300,41,"blue")
+    spur.Spur(ctx).齒輪(400,400,200,21,"black")
+    spur.Spur(ctx).齒輪(400,400,100,12,"red")
+
+    </script>
+    <canvas id="plotarea" width="800" height="800"></canvas>
+    </body>
+    </html>
+    '''
+
+        return outstring
     #@+node:2015.20150331094055.1737: *3* my3Dgeartest
     @cherrypy.expose
     # N 為齒數, M 為模數, P 為壓力角
