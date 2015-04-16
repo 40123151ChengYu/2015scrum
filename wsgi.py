@@ -130,8 +130,8 @@ class Hello(object):
 
     # 畫布指定在名稱為 plotarea 的 canvas 上
     # 以下使用中文變數名稱
-    畫布 = document["plotarea"]
-    ctx = 畫布.getContext("2d")
+    canvas = document["plotarea"]
+    ctx = canvas.getContext("2d")
 
     # 用紅色畫一條直線
     ctx.beginPath()
@@ -536,12 +536,49 @@ class Hello(object):
 
     # 以下利用 spur.py 程式進行繪圖, 接下來的協同設計運算必須要配合使用者的需求進行設計運算與繪圖
     # 其中並將工作分配給其他組員建立類似 spur.py 的相關零件繪圖模組
-    spur.Spur(ctx).齒輪(400,400,300,41,"blue")
-    spur.Spur(ctx).齒輪(400,400,200,21,"black")
-    spur.Spur(ctx).齒輪(400,400,100,12,"red")
+    # midx, midy 為齒輪圓心座標, rp 為節圓半徑, n 為齒數, pa 為壓力角, color 為線的顏色
+    # Gear(midx, midy, rp, n=20, pa=20, color="black"):
+    # 模數決定齒的尺寸大小, 囓合齒輪組必須有相同的模數與壓力角
+    # 壓力角 pa 單位為角度
+    pa = 20
+    # m 為模數
+    m = 20
+    # 第1齒輪齒數
+    n_g1 = 13
+    # 第2齒輪齒數
+    n_g2 = 18
+    # 計算兩齒輪的節圓半徑
+    rp_g1 = m*n_g1/2
+    rp_g2 = m*n_g2/2
+
+    # 將第1齒輪順時鐘轉 90 度
+    # 使用 ctx.save() 與 ctx.restore() 以確保各齒輪以相對座標進行旋轉繪圖
+    ctx.save()
+    # translate to the origin of second gear
+    ctx.translate(400,400)
+    # rotate to engage
+    ctx.rotate(pi/2)
+    # put it back
+    ctx.translate(-400,-400)
+    spur.Spur(ctx).Gear(400,400,rp_g1,n_g1, pa, "blue")
+    ctx.restore()
+
+    # 將第2齒輪逆時鐘轉 90 度之後, 再多轉一齒, 以便與第1齒輪進行囓合
+    ctx.save()
+    # translate to the origin of second gear
+    ctx.translate(400+rp_g1+rp_g2,400)
+    # rotate to engage
+    ctx.rotate(-pi/2-pi/n_g2)
+    # put it back
+    ctx.translate(-(400+rp_g1+rp_g2),-400)
+    spur.Spur(ctx).Gear(400+rp_g1+rp_g2,400,rp_g2,n_g2, pa, "black")
+    ctx.restore()
+
+    # 假如第3齒也要進行囓合, 又該如何進行繪圖?
+    #spur.Spur(ctx).Gear(400,400,100,12, pa, "red")
 
     </script>
-    <canvas id="plotarea" width="800" height="800"></canvas>
+    <canvas id="plotarea" width="1200" height="1200"></canvas>
     </body>
     </html>
     '''

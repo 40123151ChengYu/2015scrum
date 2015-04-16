@@ -41,6 +41,7 @@ expanded="office.20150407074720.3,"><vh>@file gear.py</vh></v>
 <v t="2015.20150330144929.1763" a="E"><vh>以下為參考資料</vh>
 <v t="2015.20150330144929.1764"><vh>Brython 正齒輪程式</vh></v>
 <v t="amd.20150415160041.1"><vh>fourbar 參考程式</vh></v>
+<v t="amd.20150416213450.1"><vh>@url Cango Gear examples</vh></v>
 </v>
 </vnodes>
 <tnodes>
@@ -658,5 +659,6 @@ context.scale(1,-1)
 browser.timer.set_interval(draw,10)
 </t>
 <t tx="amd.20150415215803.1"></t>
+<t tx="amd.20150416213450.1">http://www.arc.id.au/GearDrawing.html</t>
 </tnodes>
 </leo_file>
