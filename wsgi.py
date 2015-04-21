@@ -303,6 +303,10 @@ class Hello(object):
     <meta http-equiv="content-type" content="text/html;charset=utf-8">
     <!-- 載入 brython.js -->
     <script type="text/javascript" src="/static/Brython3.1.1-20150328-091302/brython.js"></script>
+
+    <script type="text/javascript" src="/static/weblink/pfcUtils.js"></script>
+    <script type="text/javascript" src="/static/weblink/wl_header.js"></script>
+
     <script src="/static/Cango2D.js" type="text/javascript"></script>
     <script src="/static/gearUtils-04.js" type="text/javascript"></script>
     </head>
@@ -312,45 +316,259 @@ class Hello(object):
     <script type="text/python">
     # 從 browser 導入 document
     from browser import document
+    # 從 javascript 導入 JSConstructor
+    from javascript import JSConstructor
     import math
 
-    # 畫布指定在名稱為 plotarea 的 canvas 上
-    canvas = document["plotarea"]
-    ctx = canvas.getContext("2d")
+    cango = JSConstructor(window.Cango2D)
 
-    # 用紅色畫一條直線
-    ctx.beginPath()
-    ctx.lineWidth = 3
-    '''
-        outstring += '''
-    ctx.moveTo('''+str(N)+","+str(M)+")"
-        outstring += '''
-    ctx.lineTo(0, 500)
-    ctx.strokeStyle = "red"
-    ctx.stroke()
+    if (!JSConstructor(window.pfcIsWindows())):
+    netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
+    session = JSConstructor(window.pfcGetProESession())
+    # 設定 config option
+    session.SetConfigOption("comp_placement_assumptions","no")
+    # 建立擺放零件的位置矩陣
+    identityMatrix = JSConstructor(window.pfcCreate ("pfcMatrix3D"))
+    for x in range(4):
+        for y in range(4):
+            if (x == y):
+                JSConstructor(window.identityMatrix.Set (x, y, 1.0))
+            else:
+                JSConstructor(window.identityMatrix.Set (x, y, 0.0))
+    transf = JSConstructor(window.pfcCreate ("pfcTransform3D").Create (identityMatrix))
+    # 取得目前的工作目錄
+    currentDir = session.getCurrentDirectory()
 
-    # 用藍色再畫一條直線
-    ctx.beginPath()
-    ctx.lineWidth = 3
-    ctx.moveTo(0, 0)
-    ctx.lineTo(500, 0)
-    ctx.strokeStyle = "blue"
-    ctx.stroke()
+    # 以目前已開檔, 作為 model
+    model = session.CurrentModel
+    # 查驗有無 model, 或 model 類別是否為組立件
+    if (model == None or model.Type != JSConstructor(window.pfcCreate("pfcModelType").MDL_ASSEMBLY)):
+        raise ValueError("Current model is not an assembly.")
+    assembly = model
+    '''----------------------------------------------- link0 -------------------------------------------------------------'''
+    # 檔案目錄，建議將圖檔放置工作目錄下較方便使用
+    descr = rJSConstructor(window.pfcCreate ("pfcModelDescriptor").CreateFromFileName ("v:/home/fourbar/link0.prt"))
+    #若 link1.prt 在 session 則直接取用
+    componentModel = session.GetModelFromDescr (descr)
+    # 若 link1.prt 不在 session 則從工作目錄中載入 session
+    componentModel = session.RetrieveModel(descr)
+    # 若 link1.prt 已經在 session 則放入組立檔中
+    if (componentModel != None):
+        # 注意這個 asmcomp 即為設定約束條件的本體
+        # asmcomp 為特徵物件,直接將零件, 以 transf 座標轉換放入組立檔案中
+        asmcomp = assembly.AssembleComponent (componentModel, transf)
+    # 建立約束條件變數
+    constrs = JSConstructor(window.pfcCreate ("pfcComponentConstraints"))
+    # 設定組立檔中的三個定位面, 注意內定名稱與 Pro/E WF 中的 ASM_D_FRONT 不同, 而是 ASM_FRONT
+    asmDatums = ["ASM_FRONT", "ASM_TOP", "ASM_RIGHT"]
+    # 設定零件檔中的三個定位面, 名稱與 Pro/E WF 中相同
+    compDatums = ["FRONT", "TOP", "RIGHT"]
+    # 建立 ids 變數, intseq 為 sequence of integers 為資料類別, 使用者可以經由整數索引擷取此資料類別的元件, 第一個索引為 0
+    ids = JSConstructor(window.pfcCreate ("intseq"))
+    # 建立路徑變數
+    path = JSConstructor(window.pfcCreate ("MpfcAssembly").CreateComponentPath (assembly, ids))
+    # 採用互動式設定相關的變數
+    MpfcSelect = JSConstructor(window.pfcCreate ("MpfcSelect"))
+    # 利用迴圈分別約束組立與零件檔中的三個定位平面
+    for i in range(3):
+    # 設定組立參考面
+    asmItem = assembly.GetItemByName (JSConstructor(window.pfcCreate ("pfcModelItemType").ITEM_SURFACE, asmDatums [i]))
+    # 若無對應的組立參考面, 則啟用互動式平面選擇表單 flag
+    if (asmItem == None):
+        interactFlag = true
+        continue
+    # 設定零件參考面
+    compItem = componentModel.GetItemByName (JSConstructor(window.pfcCreate ("pfcModelItemType").ITEM_SURFACE, compDatums [i])
+    # 若無對應的零件參考面, 則啟用互動式平面選擇表單 flag
+    if (compItem == None):
+        interactFlag = true
+        continue;
+    	
+    asmSel = JSConstructor(window.MpfcSelect.CreateModelItemSelection (asmItem, path))
+    compSel = JSConstructor(window.MpfcSelect.CreateModelItemSelection (compItem, None))
+    constr = JSConstructor(window.pfcCreate ("pfcComponentConstraint").Create (JSConstructor(window.pfcCreate ("pfcComponentConstraintType").ASM_CONSTRAINT_ALIGN))
+    constr.AssemblyReference = asmSel
+    constr.ComponentReference = compSel
+    constr.Attributes = JSConstructor(window.pfcCreate ("pfcConstraintAttributes")).Create (false, false)
+    # 將互動選擇相關資料, 附加在程式約束變數之後
+    constrs.Append (constr)
+    # 設定組立約束條件
+    asmcomp.SetConstraints (constrs, None)
+    '''-------------------------------------------------------------------------------------------------------------------'''
+    '''----------------------------------------------- link1 -------------------------------------------------------------'''
+    descr = JSConstructor(window.pfcCreate ("pfcModelDescriptor")).CreateFromFileName ("v:/home/fourbar/link1.prt")
+    componentModel = session.GetModelFromDescr (descr)
+    componentModel = session.RetrieveModel(descr)
+    if (componentModel != None):
+        asmcomp = JSConstructor(window.assembly.AssembleComponent (componentModel, transf)
+    components = assembly.ListFeaturesByType(true, JSConstructor(window.pfcCreate ("pfcFeatureType")).FEATTYPE_COMPONENT);
+    featID = components.Item(0).Id
+    ids.append(featID)
+    subPath = JSConstructor(window.pfcCreate ("MpfcAssembly")).CreateComponentPath( assembly, ids )
+    subassembly = subPath.Leaf
+    asmDatums = ["A_1", "TOP", "ASM_TOP"]
+    compDatums = ["A_1", "TOP", "TOP"]
+    relation = (JSConstructor(window.pfcCreate ("pfcComponentConstraintType").ASM_CONSTRAINT_ALIGN), JSConstructor(window.pfcCreate ("pfcComponentConstraintType").ASM_CONSTRAINT_MATE);
+    relationItem = JSConstructor(window.pfcCreate("pfcModelItemType").ITEM_AXIS,pfcCreate("pfcModelItemType").ITEM_SURFACE))
+    constrs = JSConstructor(window.pfcCreate ("pfcComponentConstraints"))
+    for i in range(2):
+        asmItem = subassembly.GetItemByName (relationItem[i], asmDatums [i])
+    if (asmItem == None):
+        interactFlag = True
+        continue
+    JSConstructor(window.compItem = componentModel.GetItemByName (relationItem[i], compDatums [i]);
+    if (compItem == None):
+        interactFlag = true
+        continue
+    MpfcSelect = JSConstructor(window.pfcCreate ("MpfcSelect"))
+    asmSel = JSConstructor(window.MpfcSelect.CreateModelItemSelection (asmItem, subPath))
+    compSel = JSConstructor(window.MpfcSelect.CreateModelItemSelection (compItem, None))
+    constr = JSConstructor(window.pfcCreate("pfcComponentConstraint").Create (relation[i]))
+    constr.AssemblyReference  = asmSel
+    constr.ComponentReference = compSel
+    constr.Attributes = JSConstructor(window.pfcCreate ("pfcConstraintAttributes").Create (true, false))
+    constrs.append (constr):
+    asmcomp.SetConstraints (constrs, None)
+    	
+    /**-------------------------------------------------------------------------------------------------------------------**/
+    /**----------------------------------------------- link2 -------------------------------------------------------------**/
+    var descr = pfcCreate ("pfcModelDescriptor").CreateFromFileName ("v:/home/fourbar/link2.prt");
+    var componentModel = session.GetModelFromDescr (descr);
+    var componentModel = session.RetrieveModel(descr);
+    if (componentModel != void null)
+    {
+    	var asmcomp = assembly.AssembleComponent (componentModel, transf);
+    }
+    var ids = pfcCreate ("intseq");
+    ids.Append(featID+1);
+    var subPath = pfcCreate ("MpfcAssembly").CreateComponentPath( assembly, ids );
+    subassembly = subPath.Leaf;
+    var asmDatums = new Array ("A_2", "TOP", "ASM_TOP");
+    var compDatums = new Array ("A_1", "TOP", "TOP");
+    var relation = new Array (pfcCreate ("pfcComponentConstraintType").ASM_CONSTRAINT_ALIGN, pfcCreate ("pfcComponentConstraintType").ASM_CONSTRAINT_MATE);
+    var relationItem = new Array(pfcCreate("pfcModelItemType").ITEM_AXIS,pfcCreate("pfcModelItemType").ITEM_SURFACE);
+    var constrs = pfcCreate ("pfcComponentConstraints");
+    for (var i = 0; i < 2; i++)
+    	{
+    		var asmItem = subassembly.GetItemByName (relationItem[i], asmDatums [i]);
+    		if (asmItem == void null)
+    		{
+    			interactFlag = true;
+    			continue;
+    		}
+    		var compItem = componentModel.GetItemByName (relationItem[i], compDatums [i]);
+    		if (compItem == void null)
+    		{
+    			interactFlag = true;
+    			continue;
+    		}
+    		var MpfcSelect = pfcCreate ("MpfcSelect");
+    		var asmSel = MpfcSelect.CreateModelItemSelection (asmItem, subPath);
+    		var compSel = MpfcSelect.CreateModelItemSelection (compItem, void null);
+    		var constr = pfcCreate ("pfcComponentConstraint").Create (relation[i]);
+    		constr.AssemblyReference  = asmSel;
+    		constr.ComponentReference = compSel;
+    		constr.Attributes = pfcCreate ("pfcConstraintAttributes").Create (true, false);
+    		constrs.Append (constr);
+    	}
+    asmcomp.SetConstraints (constrs, void null);
+    	
+    /**-------------------------------------------------------------------------------------------------------------------**/
+    /**----------------------------------------------- link3 -------------------------------------------------------------**/
+    var descr = pfcCreate ("pfcModelDescriptor").CreateFromFileName ("v:/home/fourbar/link3.prt");
+    var componentModel = session.GetModelFromDescr (descr);
+    var componentModel = session.RetrieveModel(descr);
+    if (componentModel != void null)
+    {
+    	var asmcomp = assembly.AssembleComponent (componentModel, transf);
+    }
+    var relation = new Array (pfcCreate ("pfcComponentConstraintType").ASM_CONSTRAINT_ALIGN, pfcCreate ("pfcComponentConstraintType").ASM_CONSTRAINT_MATE);
+    var relationItem = new Array(pfcCreate("pfcModelItemType").ITEM_AXIS,pfcCreate("pfcModelItemType").ITEM_SURFACE);
+    var constrs = pfcCreate ("pfcComponentConstraints");
+    var ids = pfcCreate ("intseq");
+    ids.Append(featID+2);
+    var subPath = pfcCreate ("MpfcAssembly").CreateComponentPath( assembly, ids );
+    subassembly = subPath.Leaf;
+    var asmDatums = new Array ("A_2");
+    var compDatums = new Array ("A_1");
+    for (var i = 0; i < 1; i++)
+    	{
+    		var asmItem = subassembly.GetItemByName (relationItem[i], asmDatums [i]);
+    		if (asmItem == void null)
+    		{
+    			interactFlag = true;
+    			continue;
+    		}
+    		var compItem = componentModel.GetItemByName (relationItem[i], compDatums [i]);
+    		if (compItem == void null)
+    		{
+    			interactFlag = true;
+    			continue;
+    		}
+    		var MpfcSelect = pfcCreate ("MpfcSelect");
+    		var asmSel = MpfcSelect.CreateModelItemSelection (asmItem, subPath);
+    		var compSel = MpfcSelect.CreateModelItemSelection (compItem, void null);
+    		var constr = pfcCreate ("pfcComponentConstraint").Create (relation[i]);
+    		constr.AssemblyReference  = asmSel;
+    		constr.ComponentReference = compSel;
+    		constr.Attributes = pfcCreate ("pfcConstraintAttributes").Create (true, false);
+    		constrs.Append (constr);
+    	}
+    asmcomp.SetConstraints (constrs, void null);
+    var ids = pfcCreate ("intseq");
+    ids.Append(featID);
+    var subPath = pfcCreate ("MpfcAssembly").CreateComponentPath( assembly, ids );
+    subassembly = subPath.Leaf;
+    var asmDatums = new Array ("A_2", "TOP");
+    var compDatums = new Array ("A_2", "BOTTON");
+    for (var i = 0; i < 2; i++)
+    	{
+    		var asmItem = subassembly.GetItemByName (relationItem[i], asmDatums [i]);
+    		if (asmItem == void null)
+    		{
+    			interactFlag = true;
+    			continue;
+    		}
+    		var compItem = componentModel.GetItemByName (relationItem[i], compDatums [i]);
+    		if (compItem == void null)
+    		{
+    			interactFlag = true;
+    			continue;
+    		}
+    		var MpfcSelect = pfcCreate ("MpfcSelect");
+    		var asmSel = MpfcSelect.CreateModelItemSelection (asmItem, subPath);
+    		var compSel = MpfcSelect.CreateModelItemSelection (compItem, void null);
+    		var constr = pfcCreate ("pfcComponentConstraint").Create (relation[i]);
+    		constr.AssemblyReference  = asmSel;
+    		constr.ComponentReference = compSel;
+    		constr.Attributes = pfcCreate ("pfcConstraintAttributes").Create (true, true);
+    		constrs.Append (constr);
+    	}
+    asmcomp.SetConstraints (constrs, void null);
+    /**-------------------------------------------------------------------------------------------------------------------**/
+    var session = pfcGetProESession ();
+    var solid = session.CurrentModel;
+    properties = solid.GetMassProperty(void null);
+    var COG = properties.GravityCenter;
+    document.write("MassProperty:<br />");
+    document.write("Mass:"+(properties.Mass.toFixed(2))+"       pound<br />");
+    document.write("Average Density:"+(properties.Density.toFixed(2))+"       pound/inch^3<br />");
+    document.write("Surface area:"+(properties.SurfaceArea.toFixed(2))+"           inch^2<br />");
+    document.write("Volume:"+(properties.Volume.toFixed(2))+"   inch^3<br />");
+    document.write("COG_X:"+COG.Item(0).toFixed(2)+"<br />");
+    document.write("COG_Y:"+COG.Item(1).toFixed(2)+"<br />");
+    document.write("COG_Z:"+COG.Item(2).toFixed(2)+"<br />");
+    try
+    {
+    document.write("Current Directory:<br />"+currentDir);
+    }
+    catch (err)
+    {
+    alert ("Exception occurred: "+pfcGetExceptionType (err));
+    }
+    assembly.Regenerate (void null);
+    session.GetModelWindow (assembly).Repaint();
 
-    # 用綠色再畫一條直線
-    ctx.beginPath()
-    ctx.lineWidth = 3
-    ctx.moveTo(0, 0)
-    ctx.lineTo(500, 500)
-    ctx.strokeStyle = "green"
-    ctx.stroke()
-
-    # 用黑色畫一個圓
-    ctx.beginPath()
-    ctx.lineWidth = 3
-    ctx.strokeStyle = "black"
-    ctx.arc(250,250,50,0,2*math.pi)
-    ctx.stroke()
     </script>
     <canvas id="plotarea" width="800" height="600"></canvas>
     </body>
@@ -546,16 +764,16 @@ class Hello(object):
     # 第1齒輪齒數
     n_g1 = 17
     # 第2齒輪齒數
-    n_g2 = 11
+    n_g2 = 99
     # 第3齒輪齒數
-    n_g3 = 13
+    n_g3 = 17
     # 計算兩齒輪的節圓半徑
     rp_g1 = m*n_g1/2
     rp_g2 = m*n_g2/2
     rp_g3 = m*n_g3/2
 
     # 繪圖第1齒輪的圓心座標
-    x_g1 = 400
+    x_g1 = 280
     y_g1 = 400
     # 第2齒輪的圓心座標, 假設排列成水平, 表示各齒輪圓心 y 座標相同
     x_g2 = x_g1 + rp_g1 + rp_g2
